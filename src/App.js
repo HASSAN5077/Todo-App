@@ -33,7 +33,7 @@ function App() {
     });
   }, []);
   return (
-    <div className="App bg-gray-900 h-screen">
+    <div className="App bg-gray-900 min-h-screen">
       <Header />
       <Routes>
         <Route exact path="/" element={<Home />} />

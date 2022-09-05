@@ -13,8 +13,8 @@ const Header = () => {
     navigate("/login");
   };
   return (
-    <div className="flex justify-between items-center py-3 px-24 bg-slate-800">
-      <h2 className="font-extrabold text-transparent text-3xl bg-clip-text text-center bg-gradient-to-r from-cyan-400 via-indigo-600 to-pink-600 uppercase">
+    <div className="flex justify-between items-center py-3 lg:px-24 sm:px-16 px-10 bg-slate-800">
+      <h2 className="font-extrabold text-transparent lg:text-3xl sm:2xl text-lg bg-clip-text text-center bg-gradient-to-r from-cyan-400 via-indigo-600 to-pink-600 uppercase ">
         Todo App
       </h2>
       <div>

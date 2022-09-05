@@ -10,26 +10,39 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { toast } from "react-toastify";
+import { useFormik } from "formik";
+import { signUpSchema } from "./schemas";
+
+const initialValues = {
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
+
 const SignUp = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { values, errors, handleChange, handleSubmit, touched } = useFormik({
+    initialValues: initialValues,
+    validationSchema: signUpSchema,
+    onSubmit: (values, action) => {
+      const user = createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      )
+        .then(({ user }) => {
+          updateProfile(user, { displayName: values.name });
+          action.resetForm();
+          toast("User created successfully", { type: "success" });
+        })
+        .catch((e) => {
+          if (e.message.includes("email-already-in-use")) {
+            toast("User already exist", { type: "error" });
+          }
+        });
+    },
+  });
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-
-    const user = createUserWithEmailAndPassword(auth, email, password)
-      .then(({ user }) => {
-        updateProfile(user, { displayName: name });
-        toast("User created successfully", { type: "success" });
-      })
-      .catch((e) => {
-        if (e.message.includes("email-already-in-use")) {
-          toast("User already exist", { type: "error" });
-        }
-      });
-  };
   const handleGoogleLogin = async () => {
     const user = await signInWithPopup(auth, new GoogleAuthProvider());
     toast("Login successfully", { type: "success" });
@@ -37,14 +50,14 @@ const SignUp = () => {
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <div className="md:w-1/3 sm:w-1/2 w-[90%] bg-gray-800 rounded-3xl p-5">
-        <h2 className="font-extrabold text-transparent text-4xl bg-clip-text text-center pb-3 bg-gradient-to-r from-cyan-400 via-indigo-600 to-pink-600 uppercase">
+      <div className="lg:w-1/3 sm:w-2/3 w-[90%] bg-gray-800 rounded-3xl p-5">
+        <h2 className="font-extrabold text-transparent lg:text-4xl sm:3xl text-2xl bg-clip-text text-center pb-3 bg-gradient-to-r from-cyan-400 via-indigo-600 to-pink-600 uppercase">
           Welcome to Todo App
         </h2>
         <form
           action=""
           className="mt-12"
-          onSubmit={handleSignUp}
+          onSubmit={handleSubmit}
           autoComplete="off"
         >
           <div>
@@ -59,15 +72,18 @@ const SignUp = () => {
               <AiOutlineUser size={30} color="#fff" className="mr-3" />
               <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                name="email"
+                id="name"
+                value={values.name}
+                onChange={handleChange}
+                name="name"
                 className=" outline-none bg-transparent text-gray-300 text-lg w-full"
-                required
               />
             </div>
+            {errors.name && touched.name ? (
+              <p className="text-red-500 pl-5 mt-1">{errors.name}</p>
+            ) : null}
           </div>
-          <div className="mt-5">
+          <div className="mt-3">
             <label
               htmlFor="email"
               className="text-gray-300 block
@@ -79,15 +95,18 @@ const SignUp = () => {
               <AiOutlineMail size={30} color="#fff" className="mr-3" />
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="email"
+                value={values.email}
+                onChange={handleChange}
                 name="email"
                 className=" outline-none bg-transparent text-gray-300 text-lg w-full"
-                required
               />
             </div>
+            {errors.email && touched.email ? (
+              <p className="text-red-500 pl-5 mt-1">{errors.email}</p>
+            ) : null}
           </div>
-          <div>
+          <div className="mt-3">
             <label
               htmlFor="password"
               className="text-gray-300 block
@@ -99,15 +118,18 @@ const SignUp = () => {
               <AiFillLock size={30} color="#fff" className="mr-3" />
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                name="email"
+                value={values.password}
+                onChange={handleChange}
+                name="password"
                 className=" outline-none bg-transparent text-gray-300 text-lg w-full"
-                required
+                id="password"
               />
             </div>
+            {errors.password && touched.password ? (
+              <p className="text-red-500 pl-5 mt-1">{errors.password}</p>
+            ) : null}
           </div>
-          <div className="mt-5">
+          <div className="mt-3">
             <label
               htmlFor="confirmPassword"
               className="text-gray-300 block
@@ -119,13 +141,16 @@ const SignUp = () => {
               <AiFillLock size={30} color="#fff" className="mr-3" />
               <input
                 type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={values.confirmPassword}
+                onChange={handleChange}
                 name="confirmPassword"
                 className=" outline-none bg-transparent text-gray-300 text-lg w-full"
-                required
+                id="confirmPassword"
               />
             </div>
+            {errors.confirmPassword && touched.confirmPassword ? (
+              <p className="text-red-500 pl-5 mt-1">{errors.confirmPassword}</p>
+            ) : null}
           </div>
           <button
             type="submit"

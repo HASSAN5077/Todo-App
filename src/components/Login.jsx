@@ -29,7 +29,7 @@ const Login = () => {
   };
   return (
     <div className="w-full h-screen flex items-center justify-center flex-col">
-      <div className="md:w-1/3 sm:w-1/2 w-[90%] bg-gray-800 rounded-3xl p-5">
+      <div className="md:w-1/3 sm:w-2/3 w-[90%] bg-gray-800 rounded-3xl p-5">
         <h1 className="font-extrabold text-transparent text-6xl bg-clip-text text-center pb-3 bg-gradient-to-r from-cyan-400 via-indigo-600 to-pink-600 uppercase">
           Login
         </h1>

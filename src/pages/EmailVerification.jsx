@@ -1,12 +1,19 @@
 import { sendEmailVerification } from "firebase/auth";
 import React from "react";
+import { toast } from "react-toastify";
 import { useStateValue } from "../ContextApi";
 import { auth } from "../firebase";
 
 const EmailVerification = () => {
   const [{ user }] = useStateValue();
   const handleSendEmail = () => {
-    sendEmailVerification(auth.currentUser);
+    sendEmailVerification(user)
+      .then(() => {
+        toast("Email sent successfully", { type: "success" });
+      })
+      .catch((err) => {
+        toast(err.message, { type: "error" });
+      });
   };
   return (
     <div>
