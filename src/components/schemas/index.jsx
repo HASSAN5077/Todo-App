@@ -8,3 +8,10 @@ export const signUpSchema = Yup.object({
     .required()
     .oneOf([Yup.ref("password"), null], "Passwords must match"),
 });
+
+export const loginSchema = Yup.object({
+  email: Yup.string().email().required("Please enter a valid email"),
+  password: Yup.string()
+    .min(6)
+    .required("Password must be at least 6 characters"),
+});

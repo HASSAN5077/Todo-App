@@ -9,31 +9,44 @@ import {
 } from "firebase/auth";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { loginSchema } from "./schemas";
+import { useFormik } from "formik";
+
+const initialValues = {
+  email: "",
+  password: "",
+};
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      if (user) {
-        toast("Login successfully", { type: "success" });
+  const { values, errors, touched, handleChange, handleSubmit } = useFormik({
+    initialValues: initialValues,
+    validationSchema: loginSchema,
+    onSubmit: async (values, action) => {
+      try {
+        const user = await signInWithEmailAndPassword(
+          auth,
+          values.name,
+          values.password
+        );
+        if (user) {
+          toast("Login successfully", { type: "success" });
+        }
+      } catch (e) {
+        toast("Invalid Credentials", { type: "error" });
       }
-    } catch (e) {
-      toast("Invalid Credentials", { type: "error" });
-    }
-  };
+    },
+  });
+
   const handleGoogleLogin = () => {
     const user = signInWithPopup(auth, new GoogleAuthProvider());
   };
   return (
     <div className="w-full h-screen flex items-center justify-center flex-col">
-      <div className="md:w-1/3 sm:w-2/3 w-[90%] bg-gray-800 rounded-3xl p-5">
-        <h1 className="font-extrabold text-transparent text-6xl bg-clip-text text-center pb-3 bg-gradient-to-r from-cyan-400 via-indigo-600 to-pink-600 uppercase">
+      <div className="lg:w-1/3 sm:w-2/3 w-[90%] bg-gray-800 rounded-2xl p-5">
+        <h1 className="font-extrabold text-transparent lg:text-6xl sm:5xl text-4xl bg-clip-text text-center pb-3 bg-gradient-to-r from-cyan-400 via-indigo-600 to-pink-600 uppercase">
           Login
         </h1>
-        <form onSubmit={handleLogin} className="mt-12" autoComplete="off">
+        <form onSubmit={handleSubmit} className="mt-12" autoComplete="off">
           <div>
             <label
               htmlFor="email"
@@ -42,17 +55,20 @@ const Login = () => {
             >
               Email
             </label>
-            <div className="rounded-full py-2 px-4 w-full border-2 border-gray-700 flex items-center">
+            <div className="rounded-md py-2 px-4 w-full border-2 border-gray-700 flex items-center">
               <AiOutlineUser size={30} color="#fff" className="mr-3" />
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={values.email}
+                onChange={handleChange}
                 name="email"
+                id="email"
                 className="outline-none bg-transparent text-gray-300 text-lg w-full"
-                required
               />
             </div>
+            {errors.email && touched.email ? (
+              <p className="text-red-500 pl-5 mt-1">{errors.email}</p>
+            ) : null}
           </div>
           <div className="mt-5">
             <label
@@ -62,17 +78,20 @@ const Login = () => {
             >
               Password
             </label>
-            <div className="rounded-full py-2 px-4 w-full border-2 border-gray-700 flex items-center ">
+            <div className="rounded-md py-2 px-4 w-full border-2 border-gray-700 flex items-center ">
               <AiFillLock size={30} color="#fff" className="mr-3" />
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                name="email"
+                value={values.password}
+                onChange={handleChange}
+                name="password"
+                id="password"
                 className=" outline-none bg-transparent text-gray-300 text-lg w-full"
-                required
               />
             </div>
+            {errors.password && touched.password ? (
+              <p className="text-red-500 pl-5 mt-1">{errors.password}</p>
+            ) : null}
           </div>
           <Link
             to="/forgotPassword"

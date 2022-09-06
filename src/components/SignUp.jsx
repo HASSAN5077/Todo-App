@@ -1,5 +1,4 @@
 import React from "react";
-import { useState } from "react";
 import { AiOutlineUser, AiFillLock, AiOutlineMail } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { auth } from "../firebase";
@@ -21,27 +20,28 @@ const initialValues = {
 };
 
 const SignUp = () => {
-  const { values, errors, handleChange, handleSubmit, touched } = useFormik({
-    initialValues: initialValues,
-    validationSchema: signUpSchema,
-    onSubmit: (values, action) => {
-      const user = createUserWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      )
-        .then(({ user }) => {
-          updateProfile(user, { displayName: values.name });
-          action.resetForm();
-          toast("User created successfully", { type: "success" });
-        })
-        .catch((e) => {
-          if (e.message.includes("email-already-in-use")) {
-            toast("User already exist", { type: "error" });
-          }
-        });
-    },
-  });
+  const { values, errors, handleChange, handleSubmit, touched, handleBlur } =
+    useFormik({
+      initialValues: initialValues,
+      validationSchema: signUpSchema,
+      onSubmit: (values, action) => {
+        const user = createUserWithEmailAndPassword(
+          auth,
+          values.email,
+          values.password
+        )
+          .then(({ user }) => {
+            updateProfile(user, { displayName: values.name });
+            action.resetForm();
+            toast("User created successfully", { type: "success" });
+          })
+          .catch((e) => {
+            if (e.message.includes("email-already-in-use")) {
+              toast("User already exist", { type: "error" });
+            }
+          });
+      },
+    });
 
   const handleGoogleLogin = async () => {
     const user = await signInWithPopup(auth, new GoogleAuthProvider());
@@ -68,7 +68,7 @@ const SignUp = () => {
             >
               Name
             </label>
-            <div className="rounded-full py-2 px-4 w-full border-2 border-gray-700 flex items-center">
+            <div className="rounded-md py-2 px-4 w-full border-2 border-gray-700 flex items-center">
               <AiOutlineUser size={30} color="#fff" className="mr-3" />
               <input
                 type="text"
@@ -91,7 +91,7 @@ const SignUp = () => {
             >
               Email
             </label>
-            <div className="rounded-full py-2 px-4 w-full border-2 border-gray-700 flex items-center ">
+            <div className="rounded-md py-2 px-4 w-full border-2 border-gray-700 flex items-center ">
               <AiOutlineMail size={30} color="#fff" className="mr-3" />
               <input
                 type="email"
@@ -114,7 +114,7 @@ const SignUp = () => {
             >
               Password
             </label>
-            <div className="rounded-full py-2 px-4 w-full border-2 border-gray-700 flex items-center">
+            <div className="rounded-md py-2 px-4 w-full border-2 border-gray-700 flex items-center">
               <AiFillLock size={30} color="#fff" className="mr-3" />
               <input
                 type="password"
@@ -137,7 +137,7 @@ const SignUp = () => {
             >
               Confirm Password
             </label>
-            <div className="rounded-full py-2 px-4 w-full border-2 border-gray-700 flex items-center ">
+            <div className="rounded-md py-2 px-4 w-full border-2 border-gray-700 flex items-center ">
               <AiFillLock size={30} color="#fff" className="mr-3" />
               <input
                 type="password"
@@ -146,6 +146,7 @@ const SignUp = () => {
                 name="confirmPassword"
                 className=" outline-none bg-transparent text-gray-300 text-lg w-full"
                 id="confirmPassword"
+                onBlur={handleBlur}
               />
             </div>
             {errors.confirmPassword && touched.confirmPassword ? (
